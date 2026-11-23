@@ -1,0 +1,568 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GSA BLS MCP Server — Technical Due-Diligence Assessment</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.65; color: #1f2328; background: #fff; margin: 0; padding: 2rem 1rem; }
+  .page { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.55rem; font-weight: 700; color: #1f2328; border-bottom: 2px solid #e5e7eb; padding-bottom: .6rem; margin-bottom: .4rem; }
+  .meta { color: #57606a; font-size: 12px; margin-bottom: 2rem; }
+  h2 { font-size: 1.1rem; font-weight: 700; color: #1f2328; border-bottom: 1px solid #e5e7eb; padding-bottom: .3rem; margin-top: 2.4rem; margin-bottom: .8rem; }
+  h3 { font-size: .95rem; font-weight: 600; color: #1f2328; margin-top: 1.4rem; margin-bottom: .4rem; }
+  h4 { font-size: .875rem; font-weight: 600; color: #3b82d4; margin-top: 1rem; margin-bottom: .3rem; }
+  p, li { margin: .3rem 0; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin-bottom: .2rem; }
+  code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; background: #f7f8fa; border: 1px solid #e5e7eb; padding: .05rem .3rem; border-radius: 3px; }
+  .surface { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 1rem 1.2rem; margin: .8rem 0; }
+  .surface-blue { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: .8rem 1rem; margin: .6rem 0; }
+  .surface-yellow { background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: .8rem 1rem; margin: .6rem 0; }
+  .surface-red { background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: .8rem 1rem; margin: .6rem 0; }
+  .surface-green { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: .8rem 1rem; margin: .6rem 0; }
+  /* Scorecard */
+  .scorecard { width: 100%; border-collapse: collapse; margin: .8rem 0 1.2rem; font-size: 13px; }
+  .scorecard th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: .4rem .7rem; text-align: left; font-weight: 600; }
+  .scorecard td { border: 1px solid #e5e7eb; padding: .4rem .7rem; vertical-align: top; }
+  .scorecard tr:hover td { background: #f7f8fa; }
+  .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 2px; vertical-align: middle; }
+  .dot-g { background: #22c55e; }
+  .dot-y { background: #f59e0b; }
+  .dot-r { background: #ef4444; }
+  .dot-b { background: #3b82f6; }
+  .stars { color: #f59e0b; font-size: 13px; letter-spacing: 1px; }
+  /* Metric grid */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; margin: .8rem 0; }
+  .metric { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: .6rem .8rem; text-align: center; }
+  .metric .val { font-size: 1.3rem; font-weight: 700; color: #3b82d4; }
+  .metric .lbl { font-size: 11px; color: #57606a; margin-top: .1rem; }
+  /* Priority table */
+  .ptable { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: .6rem 0 1.2rem; }
+  .ptable th { background: #f7f8fa; border: 1px solid #e5e7eb; padding: .4rem .6rem; text-align: left; font-weight: 600; }
+  .ptable td { border: 1px solid #e5e7eb; padding: .4rem .6rem; vertical-align: top; }
+  .ptable tr:hover td { background: #f7f8fa; }
+  .pill { display: inline-block; padding: .15rem .5rem; border-radius: 999px; font-size: 11px; font-weight: 600; }
+  .pill-crit { background: #fecaca; color: #991b1b; }
+  .pill-high { background: #fed7aa; color: #9a3412; }
+  .pill-med { background: #fef08a; color: #713f12; }
+  .pill-low { background: #bbf7d0; color: #14532d; }
+  .pill-qw { background: #dbeafe; color: #1e40af; }
+  .pill-st { background: #e9d5ff; color: #581c87; }
+  .pill-mt { background: #fed7aa; color: #9a3412; }
+  .pill-lt { background: #d1d5db; color: #374151; }
+  .eff-l { color: #22c55e; font-weight: 600; }
+  .eff-m { color: #f59e0b; font-weight: 600; }
+  .eff-h { color: #ef4444; font-weight: 600; }
+  /* Roadmap */
+  .phase { border-left: 3px solid #3b82d4; padding: .3rem 0 .3rem 1rem; margin: .5rem 0; }
+  .phase-title { font-weight: 700; font-size: .9rem; color: #1f2328; }
+  .phase-sub { font-size: 12px; color: #57606a; }
+  footer { margin-top: 3rem; padding-top: .8rem; border-top: 1px solid #e5e7eb; text-align: center; color: #57606a; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>GSA BLS MCP Server — Technical Due-Diligence Assessment</h1>
+<div class="meta">Repository: <code>gsa_mcp_hackathon</code>  |  Branch: <code>main</code>  |  Assessed: November 2024  |  Analyst: Senior Software Architect / Engineering Manager</div>
+
+
+<h2>1. Executive Summary</h2>
+
+<div class="surface-blue">
+<strong>What this is:</strong> A <strong>Model Context Protocol (MCP) server</strong> built in Python (FastMCP 4.x) that exposes Bureau of Labor Statistics (BLS) public time-series data to AI agents. The server was developed during a GSA hackathon and successfully deployed to <strong>IBM watsonx Orchestrate</strong>, achieving a <strong>72.7% correctness rate</strong> on a 30-question benchmark dataset — a 79% improvement over the no-tool LLM baseline (40.7%).
+</div>
+
+<p>The project is in a <strong>late-Beta / early-Production-Pilot state</strong>. It delivers genuine business value as a production artifact: 10 MCP tools covering 12 BLS surveys, a curated flagship series table (29 BLS top-picks + 100+ additional series), intent-parsing and ambiguity resolution, structural series ID build/decode/validate, local reference-data catalog, and a fully operational LLM-as-judge evaluation harness. All 915 tests pass and the codebase is ruff-clean.</p>
+
+<p>The primary maturity gaps are: (1) the package was never renamed from the template name <code>example_server</code>; (2) no code coverage tooling is configured; (3) the flagship series table is manually curated and limited to flagship/top-picks data; (4) the disambiguation engine has limited geographic coverage; (5) no authentication layer exists on the HTTP transport; (6) one unused runtime dependency (<code>pandas</code>) is declared. The road to production is well-defined and achievable in 3–6 months.</p>
+
+<div class="metrics">
+  <div class="metric"><div class="val">915</div><div class="lbl">Tests passing</div></div>
+  <div class="metric"><div class="val">72.7%</div><div class="lbl">Benchmark correctness</div></div>
+  <div class="metric"><div class="val">12</div><div class="lbl">BLS surveys covered</div></div>
+  <div class="metric"><div class="val">10</div><div class="lbl">MCP tools registered</div></div>
+</div>
+
+
+<h2>2. Repository Maturity Scorecard</h2>
+
+<table class="scorecard">
+  <tr>
+    <th>Category</th>
+    <th>Rating</th>
+    <th>Score</th>
+    <th>Key Evidence</th>
+  </tr>
+  <tr>
+    <td><strong>Project Purpose &amp; State</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>Clear objectives, working deployment, benchmark results. Package name not updated from template.</td>
+  </tr>
+  <tr>
+    <td><strong>Architecture</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>Clean layered design (tools/catalog/schema/ambiguity/utils). One minor concern: <code>search_series.py</code> (559 LoC) has per-survey hardcoded hint tables that duplicate logic.</td>
+  </tr>
+  <tr>
+    <td><strong>Code Quality</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>Ruff-clean, typed, well-documented. <code>bls_flagship_series.py</code> (2215 LoC) is a pure data file; <code>ambiguity.py</code> (653 LoC) could be split. Unused <code>example_tool.py</code> not removed.</td>
+  </tr>
+  <tr>
+    <td><strong>Testing &amp; Reliability</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>915 tests, 2.04s run, live tests gated. No coverage measurement, no property/fuzz tests, missing negative-year and concurrent-request tests.</td>
+  </tr>
+  <tr>
+    <td><strong>Security</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>SSRF protections, redirect disabled, no key leakage, SecretStr, path validation. No auth on HTTP transport — acknowledged as hackathon-only posture; must be addressed before ATO.</td>
+  </tr>
+  <tr>
+    <td><strong>DevOps &amp; Operational Readiness</strong></td>
+    <td><span class="stars">★★★☆☆</span></td>
+    <td>3/5</td>
+    <td>CI pipeline (lint + test), Dockerfile, cloud.gov manifest, IBM + Databricks deploy kits. No coverage gate, no mutation testing, no image scan, no canary/blue-green, no structured logging.</td>
+  </tr>
+  <tr>
+    <td><strong>Documentation Quality</strong></td>
+    <td><span class="stars">★★★★★</span></td>
+    <td>5/5</td>
+    <td>Exceptional: README, QUICKSTART, SECURITY, 11 plan docs, full technical handoff doc (<code>gsa_hackathon_technical_handoff.md</code>), architecture diagrams (Mermaid), submission deck + evaluation doc.</td>
+  </tr>
+  <tr>
+    <td><strong>Dependencies &amp; Technology</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>Modern stack (Python 3.11+, FastMCP 4.x, uv, pydantic-settings, httpx). <code>pandas</code> in prod deps but not imported anywhere in <code>src/</code>. Lockfile present. Dev deps are heavy (Arize Phoenix ≈ 40+ transitive packages).</td>
+  </tr>
+  <tr>
+    <td><strong>Business &amp; Product Alignment</strong></td>
+    <td><span class="stars">★★★★☆</span></td>
+    <td>4/5</td>
+    <td>Strong: BLS public data is a clear federal data-access use case. Benchmark shows 79% lift over baseline. Geographic ambiguity is the main coverage gap for real-user queries.</td>
+  </tr>
+</table>
+
+<p><strong>Overall Maturity: Late Beta / Production Pilot</strong> — 35/45 (78%) across all dimensions.</p>
+
+
+<h2>3. Key Findings</h2>
+
+<h3>3.1 Strengths</h3>
+<ul>
+  <li><strong>One-tool-per-file architecture</strong> (<code>src/example_server/tools/</code>) is extensible and scannable; each tool exposes a single <code>register(mcp)</code> function and is independently testable.</li>
+  <li><strong>Security-first HTTP client</strong> (<code>utils.py:fetch_bls</code>/<code>fetch_json</code>): redirects disabled, <code>trust_env=False</code>, response-size cap (5 MB), path traversal/SSRF prevention, API key never logged, structured error sanitization. Backed by 18 regression tests in <code>test_http_security.py</code>.</li>
+  <li><strong>Offline-first design</strong>: 9 of 10 tools require no network call. Only <code>get_series_data</code> hits the BLS API, making the server testable without network access and highly resilient to BLS API downtime.</li>
+  <li><strong>BLS series ID structural engine</strong> (<code>bls_series_schema.py</code>): covers 13 survey prefixes (SM, CE, LA, JT, CU, LN, PR, MP, CW, WP, EI, CI, PC) with full segment layout, catalog lookup, variable-length handling. Build/decode/validate are all backed by 130+ unit tests.</li>
+  <li><strong>Ambiguity detection pipeline</strong> (<code>ambiguity.py</code>): intent parsing → candidate discovery → eligibility filter → safe-default application → clarification generation, all local. This is the key hallucination-prevention layer.</li>
+  <li><strong>Evaluation harness is production-grade</strong>: Phoenix traces, two LLM-as-judge evaluators (correctness + scope), 30-question verified dataset, multi-run aggregation, A/B prompt testing. Results are reproducible and stored in version control.</li>
+  <li><strong>Pydantic-validated BLS request model</strong> (<code>models.py:BLSSeriesRequest</code>): enforces series ID format (regex), 4-digit year range, v1/v2 limit separation, start ≤ end, max 20-year span — all before any network call.</li>
+  <li><strong>Documentation exceptionally well written</strong>: the technical handoff document alone captures architecture, security, tradeoffs, and hard-won lessons in a form that onboards a new engineer in under an hour.</li>
+</ul>
+
+<h3>3.2 Issues and Gaps</h3>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> Package identity</strong> — The module is still named <code>example_server</code> throughout source, tests, Dockerfile, and manifest. This is a cosmetic but meaningful issue for publication: a server advertised as <code>BLS Public Data Server</code> (in <code>app.py</code>) shipping as <code>example-server</code> (in <code>pyproject.toml</code>) creates confusion and blocks proper packaging/attribution.
+</div>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> Unused <code>example_tool.py</code></strong> — The template's placeholder tool (<code>src/example_server/tools/example_tool.py</code>, 106 LoC) is not registered in <code>tools/__init__.py</code> but is not removed. It triggers a guard assertion in <code>test_server.py</code> (<code>assert "example_search_datasets" not in tool_names</code>). The file should be removed or its absence explained.
+</div>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> Undeclared runtime dependency</strong> — <code>pandas&gt;=3.1.1</code> is listed in <code>pyproject.toml [project].dependencies</code> but is never imported in any file under <code>src/</code>. It is imported in the Jupyter notebook (<code>bls_api_tester_aw.ipynb</code>). This adds ~40 MB to the production image unnecessarily. Conversely, <code>pandas</code> is absent from <code>requirements.txt</code>, creating a split between the two dependency manifests.
+</div>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> No code coverage measurement</strong> — CI runs 915 tests but does not measure or gate on coverage (<code>pytest-cov</code> is not in dev deps; no <code>--cov</code> flag in CI). The <code>answer_bls_question.py</code> pipeline (531 LoC, the most complex path) has limited unit coverage of the clarification-then-retry path.
+</div>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> Geographic ambiguity is shallow</strong> — <code>ambiguity.py</code> resolves geography only to a binary <code>national</code>/<code>state</code>/<code>metro</code> type. State names map to SM/LA area codes via the catalog, but the mapping is not automated — it depends on keyword-matching in <code>search_series.py</code>. A query like "unemployment in Miami-Fort Lauderdale" would not auto-resolve to the correct LA area code.
+</div>
+
+<div class="surface-red">
+<strong><span class="dot dot-r"></span> No authentication on HTTP transport</strong> — <code>SECURITY.md</code> explicitly acknowledges this as a hackathon-only posture. The <code>/mcp</code> endpoint served over streamable-HTTP is unauthenticated. Any cloud deployment for non-hackathon use requires an auth layer before the endpoint, an ATO review, and network-level egress controls.
+</div>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> <code>search_series.py</code> complexity</strong> — At 559 LoC it is the largest tool file and contains 12 per-survey private functions (<code>_search_sm</code>, <code>_search_ce</code>, …) each with hand-written hint dictionaries (<code>_SURVEY_HINTS</code>, <code>_SEASONAL_HINTS</code>, etc.) that duplicate logic from the catalog and <code>bls_series_schema.py</code>. These should be driven by schema metadata rather than hardcoded strings.
+</div>
+
+<div class="surface-yellow">
+<strong><span class="dot dot-y"></span> Benchmark correctness plateau</strong> — The 5-run average of 72.7% is consistent but has not improved across runs with the v2 prompt. The 27.3% failure rate is concentrated in queries requiring precise date-bound values (BLS revises historical data) and multi-survey comparative questions. The 30-question dataset is small; reliability at scale is unknown.
+</div>
+
+
+<h2>4. Risks &amp; Technical Debt</h2>
+
+<table class="ptable">
+  <tr><th>Risk</th><th>Severity</th><th>File(s)</th><th>Mitigation</th></tr>
+  <tr>
+    <td><strong>No auth on HTTP endpoint</strong></td>
+    <td><span class="pill pill-crit">Critical</span></td>
+    <td><code>app.py</code>, <code>Dockerfile</code></td>
+    <td>Add OAuth2/IAM token-verification middleware or deploy behind an API gateway before any non-hackathon use. Required for ATO.</td>
+  </tr>
+  <tr>
+    <td><strong>BLS v1 daily limit (25 req/day)</strong></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><code>config.py</code>, <code>utils.py</code></td>
+    <td>Register and configure <code>BLS_API_KEY</code> for v2 (500 req/day). No rate-limit enforcement or backoff logic exists; concurrent agent sessions could exhaust the daily quota.</td>
+  </tr>
+  <tr>
+    <td><strong>Flagship table is manually curated</strong></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><code>bls_flagship_series.py</code></td>
+    <td>BLS publishes series additions/removals. Add a CI check that cross-references the BLS series catalog API and flags unlisted flagship IDs.</td>
+  </tr>
+  <tr>
+    <td><strong>Local-cache staleness</strong></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><code>local-cache/*.tsv</code></td>
+    <td>~150 reference files were downloaded manually. No automated refresh. BLS changes area and industry codes on annual benchmarks. Add a Makefile / script for reproducible refresh and record provenance dates.</td>
+  </tr>
+  <tr>
+    <td><strong>Package name never updated</strong></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><code>pyproject.toml</code>, all source files</td>
+    <td>Rename <code>example_server</code> → <code>bls_mcp</code> (or equivalent) before PyPI publish or Docker Hub push.</td>
+  </tr>
+  <tr>
+    <td><strong>Unused <code>pandas</code> in prod deps</strong></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><code>pyproject.toml</code>, <code>requirements.txt</code></td>
+    <td>Move <code>pandas</code> to the <code>[dev]</code> group (notebook usage only). Removes ~40 MB from production image and fixes the split with <code>requirements.txt</code>.</td>
+  </tr>
+  <tr>
+    <td><strong>No rate-limit or retry logic</strong></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><code>utils.py:fetch_bls</code></td>
+    <td>BLS API returns HTTP 429 when limits are exceeded. Add exponential-backoff retry (tenacity or manual) and surface quota exhaustion as a structured error with <code>retry_after</code>.</td>
+  </tr>
+  <tr>
+    <td><strong>No coverage gate in CI</strong></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><code>.github/workflows/ci.yml</code></td>
+    <td>Add <code>pytest-cov</code> with <code>--fail-under=85</code>. The <code>answer_bls_question</code> clarification path and the geographic routing in <code>search_series</code> are likely under-covered.</td>
+  </tr>
+  <tr>
+    <td><strong>Python 3.11 pinned in CI, 3.13 in <code>.python-version</code></strong></td>
+    <td><span class="pill pill-low">Low</span></td>
+    <td><code>ci.yml</code>, <code>.python-version</code></td>
+    <td>CI installs 3.11, but the local venv uses 3.13 (pycache shows <code>cpython-313</code>). Align CI matrix to test both 3.11 and 3.13 to catch behavioral differences.</td>
+  </tr>
+  <tr>
+    <td><strong>Stale plan documents in root</strong></td>
+    <td><span class="pill pill-low">Low</span></td>
+    <td>11 <code>*.md</code> plan files in root</td>
+    <td>Move to <code>docs/plans/</code> or archive directory. Root clutter creates cognitive noise for new contributors.</td>
+  </tr>
+</table>
+
+
+<h2>5. Prioritized Improvement Opportunities</h2>
+
+<table class="ptable">
+  <tr><th>#</th><th>Improvement</th><th>Horizon</th><th>Priority</th><th>Effort</th><th>Benefit / Risk if skipped</th></tr>
+  <tr>
+    <td>1</td>
+    <td><strong>Add authentication middleware to HTTP transport</strong> — OAuth2 / IAM bearer token verification before <code>/mcp</code></td>
+    <td><span class="pill pill-qw">Quick Win</span></td>
+    <td><span class="pill pill-crit">Critical</span></td>
+    <td><span class="eff-m">Medium</span></td>
+    <td>Required for any non-hackathon cloud deploy. Without it, the BLS API key and all data are publicly accessible.</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td><strong>Remove <code>pandas</code> from prod deps; fix <code>requirements.txt</code> split</strong></td>
+    <td><span class="pill pill-qw">Quick Win</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-l">Low</span></td>
+    <td>Reduces image size by ~40 MB, fixes dependency manifests. Zero risk if removed.</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td><strong>Remove or move <code>example_tool.py</code></strong>; rename package to <code>bls_mcp</code></td>
+    <td><span class="pill pill-qw">Quick Win</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-l">Low</span></td>
+    <td>Removes dead code, makes package identity unambiguous, enables proper publishing.</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td><strong>Add pytest-cov to CI</strong> with 85% threshold; identify and cover the clarification-then-retry path in <code>answer_bls_question</code></td>
+    <td><span class="pill pill-qw">Quick Win</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-l">Low</span></td>
+    <td>Prevents regressions in the most complex pipeline path. Required for production confidence.</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td><strong>Register <code>BLS_API_KEY</code> and document v2 as the production default</strong>; add HTTP 429 retry with exponential backoff</td>
+    <td><span class="pill pill-qw">Quick Win</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-l">Low</span></td>
+    <td>Prevents daily quota exhaustion (25 req/day v1 → 500 req/day v2). Concurrent agent sessions will hit the v1 limit within minutes of real use.</td>
+  </tr>
+  <tr>
+    <td>6</td>
+    <td><strong>Align CI Python version matrix</strong> to test 3.11 and 3.13; fix the <code>.python-version</code> / CI mismatch</td>
+    <td><span class="pill pill-qw">Quick Win</span></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><span class="eff-l">Low</span></td>
+    <td>Prevents silent regressions when the runtime environment shifts.</td>
+  </tr>
+  <tr>
+    <td>7</td>
+    <td><strong>Automate local-cache refresh</strong>: Makefile target that downloads BLS reference files from <code>download.bls.gov/pub/time.series/</code> with provenance headers</td>
+    <td><span class="pill pill-st">Short-Term</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-m">Medium</span></td>
+    <td>Current cache was downloaded manually; staleness date unknown. BLS annual benchmarks change area and industry codes. Stale codes cause silent wrong-label responses.</td>
+  </tr>
+  <tr>
+    <td>8</td>
+    <td><strong>Expand benchmark dataset to 100+ questions</strong> covering edge cases: geographic ambiguity, multi-survey comparison, out-of-range dates, NSA vs SA edge cases</td>
+    <td><span class="pill pill-st">Short-Term</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-m">Medium</span></td>
+    <td>30-question dataset is insufficient to measure production reliability. Plateau at 72.7% cannot be diagnosed without more failure data.</td>
+  </tr>
+  <tr>
+    <td>9</td>
+    <td><strong>Refactor <code>search_series.py</code></strong>: replace per-survey hardcoded hint dicts with metadata-driven dispatch from <code>bls_series_schema.py</code></td>
+    <td><span class="pill pill-st">Short-Term</span></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><span class="eff-m">Medium</span></td>
+    <td>Removes 300+ lines of duplicated hint tables. New survey coverage requires only schema + catalog entries rather than a new <code>_search_XY</code> function.</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td><strong>Add structured logging</strong> with explicit allowlist fields (no request bodies or series values in logs)</td>
+    <td><span class="pill pill-st">Short-Term</span></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><span class="eff-m">Medium</span></td>
+    <td>Current logging is sparse (<code>logger</code> exists in <code>catalog.py</code> and <code>answer_bls_question.py</code> but is not used consistently). Operational debugging in cloud is severely hampered.</td>
+  </tr>
+  <tr>
+    <td>11</td>
+    <td><strong>Automate geographic area code resolution</strong>: map plain-name geographies (e.g. "Miami metro") to BLS LA/SM area codes via the catalog at intent-parse time</td>
+    <td><span class="pill pill-mt">Medium-Term</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-h">High</span></td>
+    <td>Geographic queries are the most common class of real-world BLS questions. Current system handles national/state well but metro areas require manual code lookup.</td>
+  </tr>
+  <tr>
+    <td>12</td>
+    <td><strong>Add multi-survey comparison capability</strong> to <code>answer_bls_question</code>: allow fetching two series in one call and returning both for comparative analysis</td>
+    <td><span class="pill pill-mt">Medium-Term</span></td>
+    <td><span class="pill pill-high">High</span></td>
+    <td><span class="eff-m">Medium</span></td>
+    <td>Many federal data questions compare e.g. CPI vs. wage growth. Current pipeline returns only one series per question.</td>
+  </tr>
+  <tr>
+    <td>13</td>
+    <td><strong>Add container image vulnerability scanning</strong> (Trivy/Grype) to CI; add image signing (Sigstore cosign)</td>
+    <td><span class="pill pill-mt">Medium-Term</span></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><span class="eff-l">Low</span></td>
+    <td>Required for FedRAMP-aligned deployment pipelines. Base image <code>python:3.11-slim</code> does receive CVEs over time.</td>
+  </tr>
+  <tr>
+    <td>14</td>
+    <td><strong>Expand BLS survey coverage</strong> to remaining major programs: OES (OE), QCEW live API, NCS (NB), OIICS (IIF)</td>
+    <td><span class="pill pill-lt">Long-Term</span></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><span class="eff-h">High</span></td>
+    <td>QCEW and OES are among the most-used BLS datasets by policy researchers. Current coverage stops at 12 surveys.</td>
+  </tr>
+  <tr>
+    <td>15</td>
+    <td><strong>Implement semantic caching</strong> for BLS API responses (Redis or SQLite): cache series data with TTL matching BLS update cadence (monthly)</td>
+    <td><span class="pill pill-lt">Long-Term</span></td>
+    <td><span class="pill pill-med">Medium</span></td>
+    <td><span class="eff-h">High</span></td>
+    <td>Avoids redundant BLS API calls across concurrent agent sessions; especially valuable under v1 rate limits.</td>
+  </tr>
+</table>
+
+
+<h2>6. 30-Day Plan (Quick Wins)</h2>
+
+<div class="surface">
+<strong>Goal:</strong> Harden the codebase for a production-ready pilot deployment, with no breaking changes to existing tool interfaces.
+</div>
+
+<div class="phase">
+  <div class="phase-title">Week 1 — Housekeeping &amp; CI</div>
+  <div class="phase-sub">Owner: Any engineer. Zero risk, immediate ROI.</div>
+  <ul>
+    <li>Move <code>pandas</code> from <code>[project].dependencies</code> to <code>[dev]</code>; sync <code>requirements.txt</code>. CI pass confirms no src import.</li>
+    <li>Remove <code>src/example_server/tools/example_tool.py</code> (dead code; guarded by existing test).</li>
+    <li>Move the 11 root-level <code>*.md</code> plan files to <code>docs/plans/</code>.</li>
+    <li>Add <code>pytest-cov</code> to dev deps; add <code>--cov=example_server --cov-fail-under=85</code> to CI test step.</li>
+    <li>Fix CI Python version: add <code>python-version: ["3.11", "3.13"]</code> matrix.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-title">Week 2 — Dependency &amp; API Hardening</div>
+  <div class="phase-sub">Owner: Backend engineer. Required for sustained production use.</div>
+  <ul>
+    <li>Register <code>BLS_API_KEY</code> in production environment (IBM Code Engine secret); update deploy scripts and <code>.env.example</code> to mark v2 key as required (not optional) for production.</li>
+    <li>Add HTTP 429 handling and exponential-backoff retry (3 attempts, 2–8s) to <code>utils.py:fetch_bls</code>.</li>
+    <li>Surface quota exhaustion as a structured error: <code>{"error": "BLS API quota exceeded", "retry_after_seconds": N}</code>.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-title">Week 3 — Auth Layer Prototype</div>
+  <div class="phase-sub">Owner: Security engineer. Blocking for non-hackathon cloud deploy.</div>
+  <ul>
+    <li>Implement IBM IAM token-verification middleware for the HTTP transport using FastMCP's custom-route hook or a Starlette middleware layer.</li>
+    <li>Gate <code>/mcp</code> path; leave <code>/health</code> and <code>/version</code> unauthenticated (required by cloud health check probes).</li>
+    <li>Update <code>SECURITY.md</code> with the auth architecture and document the ATO delta.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-title">Week 4 — Test Coverage &amp; Logging</div>
+  <div class="phase-sub">Owner: QA / backend engineer. Operational readiness for production.</div>
+  <ul>
+    <li>Add unit tests for the clarification-then-retry path in <code>answer_bls_question.py</code> (the path where <code>detect_unresolved_dimensions</code> returns non-empty and the tool exits early). Target: bring <code>answer_bls_question</code> file coverage above 85%.</li>
+    <li>Add structured logging: <code>logger.info("tool_call", extra={"tool": ..., "series_id": ..., "api_version": ...})</code> in each tool. Use an allowlist — no observation values in logs.</li>
+    <li>Confirm coverage gate passes: <code>uv run pytest tests/ --cov=example_server --cov-report=term-missing</code>.</li>
+  </ul>
+</div>
+
+<p><strong>Success metrics at Day 30:</strong> CI passes with coverage ≥ 85%, pandas removed from prod image, auth middleware merged, BLS v2 key configured, all existing 915 tests still green.</p>
+
+
+<h2>7. 90-Day Plan (Short-Term Priorities)</h2>
+
+<div class="phase">
+  <div class="phase-title">Month 2 — Data Freshness &amp; Catalog Automation</div>
+  <ul>
+    <li>Write a <code>Makefile refresh-cache</code> target that downloads all reference files from <code>https://download.bls.gov/pub/time.series/</code> and writes a <code>manifest.json</code> with download timestamps and file hashes.</li>
+    <li>Add a CI weekly job that runs the refresh and opens a PR if any file changed (using <code>gh pr create</code> or the GitHub API).</li>
+    <li>Validate refreshed files against <code>bls_series_schema.py</code> segment lengths; fail fast if column layouts changed.</li>
+    <li>Rename the package: <code>example_server</code> → <code>bls_mcp</code>. Update all references in <code>src/</code>, <code>tests/</code>, <code>main.py</code>, <code>Dockerfile</code>, <code>manifest.yaml</code>, <code>deploy/</code>.</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-title">Month 2 — Benchmark Expansion</div>
+  <ul>
+    <li>Expand <code>bls-eval-0</code> to 100+ questions covering: geographic queries (10 metro areas), NSA vs SA edge cases, out-of-year-range requests, multi-survey comparisons, invalid series IDs, and refusal cases (non-BLS questions).</li>
+    <li>Establish a regression threshold: correctness ≥ 75%, scope ≥ 97%. Block CI on regressions (run eval weekly, not per-commit).</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-title">Month 3 — Architecture Improvements</div>
+  <ul>
+    <li>Refactor <code>search_series.py</code>: replace per-survey hint dicts with metadata-driven dispatch. Each survey contributes its hints via the <code>SeriesSchema.segments</code> structure, reducing search_series to a ~200 LoC generic engine.</li>
+    <li>Add geographic area code resolution to the ambiguity engine: at intent-parse time, map state/metro names to LA/SM area codes using the catalog; populate <code>QueryIntent.geography_value</code> with the resolved code.</li>
+    <li>Add image scan step to CI using Trivy; fail on CRITICAL CVEs in base image.</li>
+  </ul>
+</div>
+
+<p><strong>Success metrics at Day 90:</strong> Package renamed, cache refresh automated, benchmark ≥ 100 questions with correctness ≥ 78%, <code>search_series.py</code> under 250 LoC, geographic queries passing in eval, CI runs image scan.</p>
+
+
+<h2>8. 6–12 Month Strategic Roadmap</h2>
+
+<table class="ptable">
+  <tr><th>Initiative</th><th>Quarter</th><th>Expected Outcome</th><th>KPI</th></tr>
+  <tr>
+    <td><strong>Multi-survey comparison tool</strong>: extend <code>answer_bls_question</code> or add <code>compare_series</code> to fetch two series and return a side-by-side comparison with YoY change calculations</td>
+    <td>Q3</td>
+    <td>Agent can answer "How did CPI compare to wage growth in 2023?"</td>
+    <td>10 new benchmark questions answered correctly</td>
+  </tr>
+  <tr>
+    <td><strong>QCEW and OES survey coverage</strong>: add schemas, catalog entries, flagship series, and tool hints for the two most-requested missing BLS programs</td>
+    <td>Q3</td>
+    <td>Survey count: 12 → 14+</td>
+    <td>Catalog dimensions and 5 flagship series per new survey in test coverage</td>
+  </tr>
+  <tr>
+    <td><strong>Response caching layer</strong> (SQLite-backed, in-process): cache <code>get_series_data</code> responses keyed on (series_ids, start_year, end_year), TTL = 24h (BLS releases monthly)</td>
+    <td>Q3</td>
+    <td>Reduce live BLS API calls by 60–80% in multi-session use</td>
+    <td>Cache hit rate &gt; 60% in production traces</td>
+  </tr>
+  <tr>
+    <td><strong>FedRAMP-aligned deployment configuration</strong>: document and implement network egress controls, audit logging to cloud SIEM, secrets in Vault/IBM Secrets Manager, ATO boundary diagram</td>
+    <td>Q4</td>
+    <td>Server is ATO-ready for GSA production deployment</td>
+    <td>ATO checklist complete; zero Critical/High findings in security review</td>
+  </tr>
+  <tr>
+    <td><strong>Semantic disambiguation upgrade</strong>: replace keyword-matching intent parser with an embedding-based retrieval step over the flagship table; enables natural-language queries like "cost of living data for the South"</td>
+    <td>Q4</td>
+    <td>Benchmark correctness: 72.7% → 85%+</td>
+    <td>Correctness rate on 100-question benchmark ≥ 85%, geographic queries ≥ 80%</td>
+  </tr>
+  <tr>
+    <td><strong>Multi-agent federation</strong>: expose the server to other agency data systems (Census, FRED) via a cross-agency MCP registry; design a canonical federal-data tool interface standard</td>
+    <td>Q4–Q1+</td>
+    <td>Single agent can answer questions spanning BLS + Census labor force data</td>
+    <td>At least one cross-agency benchmark question answered correctly end-to-end</td>
+  </tr>
+</table>
+
+
+<h2>9. Top-10 Recommended Actions &amp; Sequence</h2>
+
+<ol>
+  <li><strong>Remove <code>pandas</code> from prod deps &amp; sync <code>requirements.txt</code></strong> — 1 hour, zero risk. (<em>Unblocks clean production image.</em>)</li>
+  <li><strong>Add pytest-cov to CI with 85% gate</strong> — 2 hours. (<em>Establishes the coverage baseline; reveals gaps before making structural changes.</em>)</li>
+  <li><strong>Remove <code>example_tool.py</code></strong> — 15 minutes. (<em>Must happen before package rename.</em>)</li>
+  <li><strong>Rename package <code>example_server</code> → <code>bls_mcp</code></strong> — 2 hours with sed + tests. (<em>Depends on #3.</em>)</li>
+  <li><strong>Register BLS v2 API key in production; add 429 retry</strong> — 1 day. (<em>Independently valuable; unblocks sustained production use.</em>)</li>
+  <li><strong>Add auth middleware to HTTP transport</strong> — 2–3 days. (<em>Depends on target platform; unblocks non-hackathon cloud deploy.</em>)</li>
+  <li><strong>Write cache refresh Makefile target + CI weekly job</strong> — 3 days. (<em>Depends on #4 for correct module paths. Prevents silent data staleness.</em>)</li>
+  <li><strong>Expand benchmark to 100 questions</strong> — 1 week. (<em>Required to measure impact of #9 and #10.</em>)</li>
+  <li><strong>Refactor <code>search_series.py</code> to metadata-driven dispatch</strong> — 3 days. (<em>Depends on #8 to validate no regression.</em>)</li>
+  <li><strong>Add geographic area code resolution to intent parser</strong> — 1 week. (<em>Depends on #9; biggest single correctness improvement opportunity.</em>)</li>
+</ol>
+
+<div class="surface-green">
+<strong>Expected outcomes by action:</strong>
+<ul>
+  <li>After #1–#4: Clean, correctly identified, fully testable package suitable for internal publishing.</li>
+  <li>After #5–#6: Sustained production deployment with auth and no daily quota exhaustion risk.</li>
+  <li>After #7–#8: Operationally sound (fresh data, known reliability baseline at scale).</li>
+  <li>After #9–#10: Correctness rate projected to reach 78–82% on expanded benchmark; geographic queries become first-class citizens.</li>
+</ul>
+</div>
+
+
+<h2>10. Critical Unknowns &amp; Questions</h2>
+
+<ul>
+  <li><strong>What is the production SLA requirement?</strong> — P95 latency is currently 29.4s across 5 eval runs. If the target is &lt;5s, an async streaming UI and caching are required from day one.</li>
+  <li><strong>Who owns the BLS API key registration?</strong> — The v1→v2 upgrade is a one-time free registration but must be done by an authorized government email. It is unclear if this key currently exists in the IBM Code Engine secret store.</li>
+  <li><strong>When were the local-cache files last refreshed?</strong> — No provenance date exists in any cache file or manifest. If they are from the hackathon period (October 2024), they are approximately 1 annual benchmark cycle behind.</li>
+  <li><strong>Is there a production IBM watsonx Orchestrate instance beyond the hackathon?</strong> — The technical handoff mentions a deployed <code>gsa_ds_bls_agent</code>. It is unknown if that deployment is still active or if it needs to be rebuilt for a production environment.</li>
+  <li><strong>What is the target ATO boundary?</strong> — The server processes public, non-PII data. However, the IBM Cloud deployment introduces an external dependency. An ATO analysis should address: data classification, boundary controls, and third-party system authorization.</li>
+  <li><strong>What drove the 27.3% failure rate?</strong> — Detailed per-question failure analysis (which Phoenix traces contain) has not been exported or analyzed in the repository. Understanding the top-5 failure categories is the highest-ROI action for improving correctness.</li>
+  <li><strong>Is the 30-question dataset representative of real user queries?</strong> — The dataset was curated by the development team. Collecting and labeling a sample of real queries from agency stakeholders would validate that the benchmark tracks actual use-case performance.</li>
+</ul>
+
+<footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>
