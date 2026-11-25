@@ -1,14 +1,15 @@
 # Demo Script: BLS Public Data MCP Server
-## Internal BLS Audience — Capability Showcase (~5–6 minutes)
+## Internal BLS Audience — Capability Showcase (~6–7 minutes)
 
 ---
 
 ## PRE-RECORDING SETUP CHECKLIST
 
 Before hitting record, have these tabs/windows open and ready:
-- [ ] **Tab 1:** watsonx Orchestrate — chat with **`gsa_ds_bls_agent`** (MCP-augmented) loaded
-- [ ] **Tab 2 (optional):** BLS data homepage — https://data.bls.gov/timeseries/ — for reference
-- [ ] Clear any prior conversation history before recording
+- [ ] **Tab 1:** watsonx Orchestrate — chat with **`gsa_ds_bls_baseline_agent`** (no tools) loaded
+- [ ] **Tab 2:** watsonx Orchestrate — chat with **`gsa_ds_bls_agent`** (MCP-augmented) loaded
+- [ ] **Tab 3 (optional):** BLS data homepage — https://data.bls.gov/timeseries/ — for reference
+- [ ] Clear any prior conversation history from both agent chats before recording
 
 ---
 
@@ -26,15 +27,30 @@ Before hitting record, have these tabs/windows open and ready:
 
 ---
 
-## SECTION 2 — DEMO (0:45–4:30)
+## SECTION 2 — THE PROBLEM: BASELINE AGENT (0:45–1:15)
 
-**[Navigate to: watsonx Orchestrate → chat with `gsa_ds_bls_agent`]**
+**[Navigate to: watsonx Orchestrate → chat with `gsa_ds_bls_baseline_agent`]**
 
-> "I'm in watsonx Orchestrate — IBM's AI agent platform that lets you build and chat with agents that can call external tools and APIs. I'm chatting with our MCP-augmented BLS agent, which has access to twelve tools from our server. Let me walk through five questions that show the range of what it can do."
+> "I'm in watsonx Orchestrate — IBM's AI agent platform that lets you build and chat with agents that can call external tools and APIs. Before I show you what our server does, let me show you the problem it solves. Here's a baseline BLS assistant with no tools attached — it answers entirely from training data."
+
+**[TYPE IN CHAT:]**
+```
+What was the U.S. national unemployment rate for each month of 2024?
+```
+
+> "And here's what it returns — something like: *'I'm sorry, but I don't have the monthly unemployment rate figures for 2024. My training data only goes through early 2024, and I don't have real-time access to retrieve newer numbers.'* The model is being honest — it knows what it doesn't know. But that data is publicly available right now on the BLS website. The gap isn't in the data — it's in the agent's ability to reach it."
 
 ---
 
-### Question 1 — Live data retrieval (0:45–1:30)
+## SECTION 3 — THE SOLUTION: MCP-AUGMENTED AGENT (1:15–5:15)
+
+**[Navigate to: watsonx Orchestrate → chat with `gsa_ds_bls_agent`]**
+
+> "Now let's switch to our MCP-augmented agent — same model, but connected to our BLS Public Data MCP Server and its twelve tools. I'll ask it the same question first, then show you the broader range of what it can do."
+
+---
+
+### Question 1 — Live data retrieval (1:15–2:00)
 
 **[TYPE IN CHAT:]**
 ```
@@ -52,7 +68,7 @@ What was the U.S. national unemployment rate for each month of 2024?
 
 ---
 
-### Question 2 — Ambiguity detection (1:30–2:30)
+### Question 2 — Ambiguity detection (2:00–3:00)
 
 **[TYPE IN CHAT:]**
 ```
@@ -77,7 +93,7 @@ What is the current annual inflation rate based on the Consumer Price Index?
 
 ---
 
-### Question 3 — Series discovery (2:30–3:15)
+### Question 3 — Series discovery (3:00–3:45)
 
 **[TYPE IN CHAT:]**
 ```
@@ -94,7 +110,7 @@ What BLS data is available about job openings and hiring trends?
 
 ---
 
-### Question 4 — Series ID decoding (3:15–4:00)
+### Question 4 — Series ID decoding (3:45–4:30)
 
 **[TYPE IN CHAT:]**
 ```
@@ -111,7 +127,7 @@ Decode this BLS series ID for me: CES0000000001
 
 ---
 
-### Question 5 — Metro area employment (4:00–4:30)
+### Question 5 — Metro area employment (4:30–5:15)
 
 **[TYPE IN CHAT:]**
 ```
@@ -129,7 +145,7 @@ How many people were employed in the New York City metro area in 2024?
 
 ---
 
-## SECTION 3 — LIMITATIONS & WHAT'S NEXT (4:30–5:30)
+## SECTION 4 — LIMITATIONS & WHAT'S NEXT (5:15–6:15)
 
 **[Optional: return to slides or stay in the agent]**
 
@@ -150,19 +166,22 @@ How many people were employed in the New York City metro area in 2024?
 | Section | Target Time | Cumulative |
 |---|---|---|
 | Intro | 0:45 | 0:45 |
-| Q1 — Live data retrieval | 0:45 | 1:30 |
-| Q2 — Ambiguity detection (inflation) | 1:00 | 2:30 |
-| Q3 — Series discovery (job openings) | 0:45 | 3:15 |
-| Q4 — Series ID decode | 0:45 | 4:00 |
-| Q5 — Metro area employment | 0:30 | 4:30 |
-| Limitations & what's next | 1:00 | 5:30 |
+| Baseline agent (problem) | 0:30 | 1:15 |
+| Q1 — Live data retrieval | 0:45 | 2:00 |
+| Q2 — Ambiguity detection (inflation) | 1:00 | 3:00 |
+| Q3 — Series discovery (job openings) | 0:45 | 3:45 |
+| Q4 — Series ID decode | 0:45 | 4:30 |
+| Q5 — Metro area employment | 0:45 | 5:15 |
+| Limitations & what's next | 1:00 | 6:15 |
 
-**Total target: ~5–5.5 minutes**
+**Total target: ~6–6.5 minutes**
 
 ---
 
 ## TIPS
 
 - This audience knows BLS data — lean into the technical details (survey names, series ID structure) rather than explaining what BLS is
+- The baseline vs. MCP contrast is the clearest way to show value — keep both tabs visible side by side if screen space allows
+- The key narrative contrast is always: **baseline = frozen training data → MCP agent = live verified data**
 - The limitations section is a strength, not a weakness — being candid about what's missing, especially the subject matter expert gap, builds credibility
 - If a tool call takes time, refer to what's happening under the hood ("it's querying the BLS API directly")
