@@ -1,0 +1,168 @@
+# Demo Script: BLS Public Data MCP Server
+## Internal BLS Audience — Capability Showcase (~5–6 minutes)
+
+---
+
+## PRE-RECORDING SETUP CHECKLIST
+
+Before hitting record, have these tabs/windows open and ready:
+- [ ] **Tab 1:** watsonx Orchestrate — chat with **`gsa_ds_bls_agent`** (MCP-augmented) loaded
+- [ ] **Tab 2 (optional):** BLS data homepage — https://data.bls.gov/timeseries/ — for reference
+- [ ] Clear any prior conversation history before recording
+
+---
+
+## SECTION 1 — INTRO (0:00–0:45)
+
+**[On screen: Title slide or repo README]**
+
+> "Hi everyone — I'm Vicky, and I'm here with my colleagues Angel and Ayme. We're all Data Scientists here at BLS.
+>
+> Today we want to walk you through something we built as part of the government-wide MCP Server Hackathon — a **BLS Public Data MCP Server**. The idea is straightforward: AI agents are increasingly being used across government to answer questions, but they can't natively reach our data. Their training knowledge is frozen at a point in time, and they don't have a reliable way to query the BLS Public Data API on their own.
+>
+> As people who work with BLS data every day, we also know that our data structure isn't always easy to navigate — even for experienced analysts. The BLS organizes data into dozens of surveys, each with its own series ID format made up of multiple coded segments. Knowing which series to use for a given question isn't obvious, and that's a real barrier.
+>
+> So we built a server that sits between an AI agent and the BLS API — handling series discovery, ID validation, ambiguity detection, and live data retrieval. The result is an agent that can answer plain-language questions about BLS data with accuracy and full provenance. Let's show you what that looks like."
+
+---
+
+## SECTION 2 — DEMO (0:45–4:30)
+
+**[Navigate to: watsonx Orchestrate → chat with `gsa_ds_bls_agent`]**
+
+> "I'm in watsonx Orchestrate — IBM's AI agent platform that lets you build and chat with agents that can call external tools and APIs. I'm chatting with our MCP-augmented BLS agent, which has access to twelve tools from our server. Let me walk through five questions that show the range of what it can do."
+
+---
+
+### Question 1 — Live data retrieval (0:45–1:30)
+
+**[TYPE IN CHAT:]**
+```
+What was the U.S. national unemployment rate for each month of 2024?
+```
+
+**[While waiting for the response:]**
+> "The agent is running our `answer_bls_question` tool — going straight to the BLS API, not generating from memory."
+
+*If it's taking longer:* > "What's happening under the hood is the server is parsing the question, matching it to the right series in our catalog, validating the series ID locally, and then making a live call to the BLS Public Data API. All of that is happening in real time."
+
+**[Pause — point out the result]**
+
+> "We get the actual monthly unemployment rate numbers for all of 2024, sourced directly from BLS, with the series cited. This is data that a standard AI model couldn't give you — its training doesn't cover it. Here, it's live."
+
+---
+
+### Question 2 — Ambiguity detection (1:30–2:30)
+
+**[TYPE IN CHAT:]**
+```
+What is the current annual inflation rate based on the Consumer Price Index?
+```
+
+> "This one is worth pausing on. 'Inflation rate' is genuinely ambiguous — it could mean the raw CPI index level, the month-over-month change, or the 12-month percent change. Rather than silently picking one, the server surfaces a clarification question. That's intentional design — we built in an ambiguity detection step because getting the wrong measure and not knowing it is worse than being asked to clarify."
+
+**[TYPE IN CHAT — select the 12-month percent change option]**
+```
+3
+```
+
+**[While waiting:]**
+> "It's now fetching the live data."
+
+*If it's taking longer:* > "It's making a live call to the BLS API — same data you'd get if you queried the API directly, just surfaced through natural language."
+
+**[Pause — point out the result]**
+
+> "And we get the year-over-year CPI change — the measure most commonly reported as the annual inflation rate. Worth noting: the agent returns December 2024 as the most recent figure, which reflects a known LLM behavior around date reasoning. The data itself is accurate — it came straight from the BLS API — but how the model interprets 'current' is something we're continuing to work on."
+
+---
+
+### Question 3 — Series discovery (2:30–3:15)
+
+**[TYPE IN CHAT:]**
+```
+What BLS data is available about job openings and hiring trends?
+```
+
+> "Now something a little different — an exploratory question. This is the kind of thing someone might ask if they're new to BLS data or trying to figure out which survey covers a topic they care about. The agent calls our `suggest_series` tool, which searches a curated flagship series catalog locally — no API call needed. It returns ranked suggestions with the series name, the survey it belongs to, and a plain-language rationale for why it matches."
+
+*If it's taking longer:* > "This one actually runs entirely locally — no network call. It's searching our embedded series catalog. If it's taking a moment, it's the LLM reasoning about the response, not a data fetch."
+
+**[Pause — point out the ranked suggestions]**
+
+> "So instead of a user having to navigate bls.gov and understand the difference between JOLTS and CES to find job openings data, the agent surfaces that for them directly."
+
+---
+
+### Question 4 — Series ID decoding (3:15–4:00)
+
+**[TYPE IN CHAT:]**
+```
+Decode this BLS series ID for me: CES0000000001
+```
+
+> "This one is for the analysts and data professionals in the room. BLS series IDs encode a lot of information in a compact format — survey, geography, industry, data type, seasonal adjustment — but reading them isn't intuitive. Our `decode_series_id` tool breaks down every segment into plain language using our embedded BLS catalog. No API call, all local."
+
+*If it's taking longer:* > "Same as before — this is all local. The catalog is embedded in the server, so there's no API call. Just the model formatting the response."
+
+**[Pause — point out the decoded output]**
+
+> "So `CES0000000001` decodes as: Current Employment Statistics, national, all industries, all employees, seasonally adjusted — the nonfarm payrolls headline series. That's information that used to require knowing the format spec by heart or digging through BLS documentation."
+
+---
+
+### Question 5 — Metro area employment (4:00–4:30)
+
+**[TYPE IN CHAT:]**
+```
+How many people were employed in the New York City metro area in 2024?
+```
+
+**[While waiting:]**
+> "Testing a geographic question now — this exercises our area code lookup and the State and Metro Area Employment survey."
+
+*If it's taking longer:* > "The server is resolving 'New York City metro area' to the correct BLS area code, then fetching employment data from the SM survey. Geographic lookups add a small step to the pipeline."
+
+**[Pause — point out the result]**
+
+> "And we get employment figures for the New York metro, sourced from the SM survey. The server resolved 'New York City metro area' to the correct BLS area code automatically — no need for the user to know that code exists."
+
+---
+
+## SECTION 3 — LIMITATIONS & WHAT'S NEXT (4:30–5:30)
+
+**[Optional: return to slides or stay in the agent]**
+
+> "Before we close, we want to be honest about what this is and what it isn't yet.
+>
+> The server covers twelve BLS surveys and a curated set of flagship series — but BLS publishes far more data than what's in the current catalog. Expanding coverage is an ongoing effort.
+>
+> On ambiguity and date reasoning — as you saw with the inflation question, the LLM layer still has rough edges around interpreting 'current.' That's something we're actively working to improve.
+>
+> And probably the most important limitation: **we built this without subject matter experts in the loop.** The series descriptions, the flagship catalog, the ambiguity detection rules — all of that was developed by our team based on our own knowledge of BLS data. What we really would have benefited from is working alongside economists, program area experts, and the survey teams who own this data day to day. The server is a solid foundation, but the domain expertise to make it truly authoritative needs to come from the people inside those programs. That's the collaboration we'd want to pursue next.
+>
+> With that said — we think this demonstrates real potential. A tool that lets anyone ask a plain-language question and get back a sourced, accurate BLS data answer is something that could genuinely improve how our data is accessed and understood. We'd love your feedback on where to take it. Thank you."
+
+---
+
+## TIMING GUIDE
+
+| Section | Target Time | Cumulative |
+|---|---|---|
+| Intro | 0:45 | 0:45 |
+| Q1 — Live data retrieval | 0:45 | 1:30 |
+| Q2 — Ambiguity detection (inflation) | 1:00 | 2:30 |
+| Q3 — Series discovery (job openings) | 0:45 | 3:15 |
+| Q4 — Series ID decode | 0:45 | 4:00 |
+| Q5 — Metro area employment | 0:30 | 4:30 |
+| Limitations & what's next | 1:00 | 5:30 |
+
+**Total target: ~5–5.5 minutes**
+
+---
+
+## TIPS
+
+- This audience knows BLS data — lean into the technical details (survey names, series ID structure) rather than explaining what BLS is
+- The limitations section is a strength, not a weakness — being candid about what's missing, especially the subject matter expert gap, builds credibility
+- If a tool call takes time, refer to what's happening under the hood ("it's querying the BLS API directly")
