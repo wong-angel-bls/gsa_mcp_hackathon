@@ -154,19 +154,18 @@ a
 
 ---
 
-## SECTION 4 — LIMITATIONS & WHAT'S NEXT (5:15–6:15)
+## SECTION 4 — LIMITATIONS & CLOSING (5:15–6:15)
 
 **[Optional: return to slides or stay in the agent]**
 
-> "Before we close, we want to be honest about what this is and what it isn't yet.
+> "Before we close, we want to be clear about what this is — it's an MVP, a prototype built to demonstrate that this capability is possible.
 >
-> The server covers twelve BLS surveys and a curated set of flagship series — but BLS publishes far more data than what's in the current catalog. Expanding coverage is an ongoing effort.
+> With that framing in mind, here's what we know the prototype doesn't yet cover: the server includes twelve BLS surveys and a curated set of flagship series, but BLS publishes far more data than what's in the current catalog. And as you saw with the inflation and New York questions, the ambiguity detection step adds a clarification round-trip — that's intentional design, but it's something that would need refinement at scale.
 >
-> On ambiguity and date reasoning — as you saw with the inflation question, the LLM layer still has rough edges around interpreting 'current.' That's something we're actively working to improve.
 >
-> And probably the most important limitation: **we built this without subject matter experts in the loop.** The series descriptions, the flagship catalog, the ambiguity detection rules — all of that was developed by our team based on our own knowledge of BLS data. What we really would have benefited from is working alongside economists, program area experts, and the survey teams who own this data day to day. The server is a solid foundation, but the domain expertise to make it truly authoritative needs to come from the people inside those programs. That's the collaboration we'd want to pursue next.
+> And probably the most important gap: **we built this without subject matter experts in the loop.** The series descriptions, the flagship catalog, the ambiguity detection rules — all of that was developed by our team based on our own knowledge of BLS data. The domain expertise to make something like this truly authoritative needs to come from the economists, program area experts, and survey teams who own this data day to day.
 >
-> With that said — we think this demonstrates real potential. A tool that lets anyone ask a plain-language question and get back a sourced, accurate BLS data answer is something that could genuinely improve how our data is accessed and understood. We'd love your feedback on where to take it. Thank you."
+> What we hope you take away is that the capability is real. A prototype that lets someone ask a plain-language question and get back a sourced, accurate BLS data answer — built in under six weeks — shows this is achievable. Whether it makes sense to take it further is a conversation we'd want to have with you. Thank you."
 
 ---
 
