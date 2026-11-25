@@ -160,7 +160,7 @@ a
 
 > "Before we close, we want to be clear about what this is — it's an MVP, a prototype built to demonstrate that this capability is possible.
 >
-> With that framing in mind, here's what we know the prototype doesn't yet cover: the server includes twelve BLS surveys and a curated set of flagship series, but BLS publishes far more data than what's in the current catalog. And as you saw with the inflation and New York questions, the ambiguity detection step adds a clarification round-trip — that's intentional design, but it's something that would need refinement at scale.
+> With that framing in mind, here's what we know the prototype doesn't yet cover: the server includes twelve BLS surveys and a curated set of flagship series, but BLS publishes far more data than what's in the current catalog. And as you saw with the inflation and New York questions, the agent will sometimes ask a clarifying question before fetching data — that's intentional, but it's something that would need refinement at scale.
 >
 >
 > And probably the most important gap: **we built this without subject matter experts in the loop.** The series descriptions, the flagship catalog, the ambiguity detection rules — all of that was developed by our team based on our own knowledge of BLS data. The domain expertise to make something like this truly authoritative needs to come from the economists, program area experts, and survey teams who own this data day to day.
