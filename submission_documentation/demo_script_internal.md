@@ -112,6 +112,8 @@ What BLS data is available about job openings and hiring trends?
 
 ### Question 4 — Series ID decoding (3:45–4:30)
 
+Now I'm going to ask the agent a question that highlights our `decode_series_id` tool
+
 **[TYPE IN CHAT:]**
 ```
 Decode this BLS series ID for me: CES0000000001
@@ -134,14 +136,21 @@ Decode this BLS series ID for me: CES0000000001
 How many people were employed in the New York City metro area in 2024?
 ```
 
-**[While waiting:]**
-> "Testing a geographic question now — this exercises our area code lookup and the State and Metro Area Employment survey."
+> "A geographic question — this exercises our area code lookup and the State and Metro Area Employment survey. And again, notice the clarification step — the agent asks which employment measure we want: nonfarm payrolls, unemployment rate, or job openings. Same intentional design as before — it won't assume."
 
-*If it's taking longer:* > "The server is resolving 'New York City metro area' to the correct BLS area code, then fetching employment data from the SM survey. Geographic lookups add a small step to the pipeline."
+**[TYPE IN CHAT — select nonfarm payrolls]**
+```
+a
+```
+
+**[While waiting:]**
+> "It's now resolving 'New York City metro area' to the correct BLS area code and fetching the data."
+
+*If it's taking longer:* > "The server is resolving the metro area to the correct BLS area code, then fetching employment data from the SM survey. Geographic lookups add a small step to the pipeline."
 
 **[Pause — point out the result]**
 
-> "And we get employment figures for the New York metro, sourced from the SM survey. The server resolved 'New York City metro area' to the correct BLS area code automatically — no need for the user to know that code exists."
+> "And we get nonfarm payroll employment for the New York metro, sourced from the SM survey. The server resolved 'New York City metro area' to the correct BLS area code automatically — no need for the user to know that code exists."
 
 ---
 
