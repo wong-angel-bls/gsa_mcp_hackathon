@@ -117,7 +117,7 @@ What BLS data is available about job openings and hiring trends?
 Decode this BLS series ID for me: CES0000000001
 ```
 
-> "This one is for the analysts and data professionals in the room. BLS series IDs encode a lot of information in a compact format — survey, geography, industry, data type, seasonal adjustment — but reading them isn't intuitive. Our `decode_series_id` tool breaks down every segment into plain language using our embedded BLS catalog. No API call, all local."
+> "BLS series IDs encode a lot of information in a compact format — survey, geography, industry, data type, seasonal adjustment — but reading them isn't intuitive. Our `decode_series_id` tool breaks down every segment into plain language using our embedded BLS catalog. No API call, all local."
 
 *If it's taking longer:* > "Same as before — this is all local. The catalog is embedded in the server, so there's no API call. Just the model formatting the response."
 
