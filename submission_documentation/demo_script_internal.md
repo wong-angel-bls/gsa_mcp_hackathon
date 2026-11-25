@@ -16,13 +16,13 @@ Before hitting record, have these tabs/windows open and ready:
 
 **[On screen: Title slide or repo README]**
 
-> "Hi everyone — I'm Vicky, and I'm here with my colleagues Angel and Ayme. We're all Data Scientists here at BLS.
+> "Hi everyone — I'm Vicky, and I'm here with my colleagues Angel and Ayme. We're all Data Scientists with the Office of Prices and Living Conditions here at BLS.
 >
 > Today we want to walk you through something we built as part of the government-wide MCP Server Hackathon — a **BLS Public Data MCP Server**. The idea is straightforward: AI agents are increasingly being used across government to answer questions, but they can't natively reach our data. Their training knowledge is frozen at a point in time, and they don't have a reliable way to query the BLS Public Data API on their own.
 >
-> As people who work with BLS data every day, we also know that our data structure isn't always easy to navigate — even for experienced analysts. The BLS organizes data into dozens of surveys, each with its own series ID format made up of multiple coded segments. Knowing which series to use for a given question isn't obvious, and that's a real barrier.
+> BLS data has a learning curve. The structure isn't always intuitive — especially for people who are new to our data or new to a role here. We organize data into dozens of surveys, each with its own series ID format made up of multiple coded segments. Knowing which series to use for a given question isn't obvious, and that's a real barrier for anyone getting up to speed.
 >
-> So we built a server that sits between an AI agent and the BLS API — handling series discovery, ID validation, ambiguity detection, and live data retrieval. The result is an agent that can answer plain-language questions about BLS data with accuracy and full provenance. Let's show you what that looks like."
+> So, as part of the GSA MCP Server Hackathon — an eight-week challenge to build MCP servers that connect AI agents to real government data, with less than six weeks of active coding time — we built a server that sits between an AI agent and the BLS API, handling series discovery, ID validation, ambiguity detection, and live data retrieval. We built it using Bob — IBM's AI coding assistant — which helped us move quickly within that tight timeframe. The result is an agent that can answer plain-language questions about BLS data with accuracy and full provenance. Let's show you what that looks like."
 
 ---
 
